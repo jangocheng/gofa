@@ -41,14 +41,16 @@ func getAuth() error {
 
 	resp, err := http.PostForm(beego.AppConfig.String("baiduKey::TokenUrl"), v)
 	if err != nil {
-		beego.Warning()
+		beego.Warning("Get Token error :" + err.Error())
+		return err
 	}
 
 	defer resp.Body.Close()
 
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic("get baidu token error, %+v" + err.Error())
+		beego.Warning("Get Token error :" + err.Error())
+		return err
 	}
 
 	var session struct {
@@ -57,7 +59,8 @@ func getAuth() error {
 	}
 
 	if err := json.Unmarshal(body, &session); err != nil {
-		panic("get baidu token error, %+v" + err.Error())
+		beego.Warning("Get Token error :" + err.Error())
+		return err
 	}
 	Token = session.AccessToken
 

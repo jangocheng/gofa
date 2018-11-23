@@ -11,7 +11,7 @@ func init() {
         beego.ControllerComments{
             Method: "UserList",
             Router: `/userlist`,
-            AllowHTTPMethods: []string{"get"},
+            AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})

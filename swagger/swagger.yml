@@ -12,7 +12,7 @@ info:
 basePath: /gofa
 paths:
   /group/userlist:
-    get:
+    post:
       tags:
       - group
       description: 通过groupID获取人物列表
@@ -25,11 +25,13 @@ paths:
         type: string
       responses:
         "200":
-          description: success
+          description: ""
           schema:
             type: array
             items:
-              $ref: '#/definitions/login'
+              $ref: '#/definitions/["uid1","uid2"]'
+        "403":
+          description: uid is empty
   /user/:
     get:
       tags:
@@ -149,8 +151,8 @@ paths:
         "200":
           description: '{string} logout success'
 definitions:
-  login:
-    title: login
+  '["uid1","uid2"]':
+    title: '["uid1","uid2"]'
     type: object
   models.Profile:
     title: Profile
