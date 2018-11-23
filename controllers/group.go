@@ -22,6 +22,7 @@ func (g *GroupController) UserList() {
 
 	list, err := models.GetUserListByGroupID(groupID)
 	if err != nil {
+		g.Abort("403")
 		g.Data["json"] = err.Error()
 	} else {
 		g.Data["json"] = list
@@ -36,6 +37,7 @@ func (g *GroupController) UserList() {
 // @Param	image		query 	string	true		"image"
 // @Param	image_type	query	string	true 		"base64/url/face_token"
 // @Param	user_id		query	string	true 		"user name"
+// @Param	user_info	query	string	true 		"user name"
 // @Success 200 {string} "2fa64a88a9d5118916f9a303782a97d3"
 // @Failure 403 uid is empty
 // @router /addface [post]
@@ -45,12 +47,35 @@ func (g *GroupController) AddFace() {
 		ImageType: strings.ToUpper(g.GetString("image_type")),
 		GroupID:   g.GetString("group_id"),
 		UserID:    g.GetString("user_id"),
-	}
-	if err := g.ParseForm(&gStorage); err != nil {
-		g.Data["json"] = "add error"
+		UserInfo:  g.GetString("user_info"),
 	}
 
 	re, err := models.AddUserImageToGroup(gStorage)
+	if err != nil {
+		g.Data["json"] = err.Error()
+	} else {
+		g.Data["json"] = re
+	}
+
+	g.ServeJSON()
+}
+
+// @Title searchface
+// @Description face查找
+// @Param	image		query 	string	true		"image"
+// @Param	image_type	query	string	true 		"base64/url/face_token"
+// @Success 200 {string} "2fa64a88a9d5118916f9a303782a97d3"
+// @Failure 403 uid is empty
+// @router /searchface [post]
+func (g *GroupController) SearchFace() {
+	gStorage := entities.FaceSearchStorage{
+		Image:       g.GetString("image"),
+		ImageType:   strings.ToUpper(g.GetString("image_type")),
+		GroupIDList: "p_idol",
+		MaxUserNum:  1,
+	}
+
+	re, err := models.SerachFace(gStorage)
 	if err != nil {
 		g.Data["json"] = err.Error()
 	} else {

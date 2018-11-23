@@ -19,12 +19,14 @@ type AddFaceStorage struct {
 	ImageType string `json:"image_type"`
 	GroupID   string `json:"group_id"`
 	UserID    string `json:"user_id"`
+	UserInfo  string `json:"user_info"`
 }
 
 type AddFaceResp struct {
 	ErrorCode int32  `json:"error_code"`
 	ErrorMsg  string `json:"error_msg"`
-	Result    struct {
+
+	Result struct {
 		FaceToken string `json:"face_token"`
 		Location  struct {
 			Left     float32 `json:"left"`
@@ -33,5 +35,27 @@ type AddFaceResp struct {
 			Height   float32 `json:"height"`
 			Rotation float32 `json:"rotation"`
 		} `json:"location"`
+	} `json:"result"`
+}
+
+type FaceSearchStorage struct {
+	Image       string `json:"image"`
+	ImageType   string `json:"image_type"`
+	GroupIDList string `json:"group_id_list"`
+	MaxUserNum  uint32 `json:"max_user_num"`
+}
+
+type FaceSearchResp struct {
+	ErrorCode int32  `json:"error_code"`
+	ErrorMsg  string `json:"error_msg"`
+
+	Result struct {
+		FaceToken string `json:"face_token"`
+		UserList  []struct {
+			GroupID  string  `json:"group_id"`
+			UserID   string  `json:"user_id"`
+			UserInfo string  `json:"user_info"`
+			Score    float32 `json:"score"`
+		} `json:"user_list"`
 	} `json:"result"`
 }

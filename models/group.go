@@ -3,6 +3,7 @@ package models
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/astaxie/beego"
 	"gofa/entities"
 	"gofa/resources"
@@ -11,6 +12,7 @@ import (
 var (
 	UrlUserListByGroup = "https://aip.baidubce.com/rest/2.0/face/v3/faceset/group/getusers"
 	UrlAddUserToGroup  = "https://aip.baidubce.com/rest/2.0/face/v3/faceset/user/add"
+	UrlSearchFace      = "https://aip.baidubce.com/rest/2.0/face/v3/search"
 	AccessToken        = "?access_token="
 )
 
@@ -72,4 +74,31 @@ func AddUserImageToGroup(gStorage entities.AddFaceStorage) (string, error) {
 	}
 
 	return addResp.Result.FaceToken, nil
+}
+
+func SerachFace(gStorage entities.FaceSearchStorage) (string, error) {
+
+	params, err := json.Marshal(gStorage)
+	if err != nil {
+		beego.Warning("SerachFace err", err, gStorage)
+		return "", err
+	}
+
+	re, err := HttpPost(UrlSearchFace+AccessToken+resources.Token, string(params))
+	if err != nil {
+		beego.Warning("get userlist by group id  err :" + err.Error())
+		return "", err
+	}
+	searchResp := entities.FaceSearchResp{}
+	if err := json.Unmarshal(re, &searchResp); err != nil {
+		beego.Warning("Unmarshal resp error ["+string(re), err)
+		return "", err
+	}
+	if searchResp.ErrorCode != 0 {
+		beego.Warning("call error :", string(re))
+		return "", errors.New(searchResp.ErrorMsg)
+	}
+
+	fmt.Println(searchResp, "\n\n")
+	return "", nil
 }
