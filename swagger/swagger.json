@@ -15,6 +15,53 @@
     },
     "basePath": "/gofa",
     "paths": {
+        "/group/addface": {
+            "post": {
+                "tags": [
+                    "group"
+                ],
+                "description": "向祖中添加face",
+                "operationId": "GroupController.addface",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "group_id",
+                        "description": "groupID",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "image",
+                        "description": "image",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "image_type",
+                        "description": "base64/url/face_token",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "user_id",
+                        "description": "user name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{string} \"2fa64a88a9d5118916f9a303782a97d3\""
+                    },
+                    "403": {
+                        "description": "uid is empty"
+                    }
+                }
+            }
+        },
         "/group/userlist": {
             "post": {
                 "tags": [

@@ -10,6 +10,7 @@ import (
 
 var (
 	UrlUserListByGroup = "https://aip.baidubce.com/rest/2.0/face/v3/faceset/group/getusers"
+	UrlAddUserToGroup  = "https://aip.baidubce.com/rest/2.0/face/v3/faceset/user/add"
 	AccessToken        = "?access_token="
 )
 
@@ -20,7 +21,7 @@ func GetUserListByGroupID(groupID string) ([]string, error) {
 		Length:  100,
 	})
 	if err != nil {
-		beego.Warning("GetUserListByGroupID err", err)
+		beego.Warning("GetUserListByGroupID err", err, groupID)
 		return nil, err
 	}
 
@@ -28,6 +29,7 @@ func GetUserListByGroupID(groupID string) ([]string, error) {
 	re, err := HttpPost(UrlUserListByGroup+AccessToken+resources.Token, string(params))
 	if err != nil {
 		beego.Warning("get userlist by group id  err :" + err.Error())
+		return nil, err
 	}
 
 	userListResp := entities.UserListResp{}
@@ -44,4 +46,30 @@ func GetUserListByGroupID(groupID string) ([]string, error) {
 
 	return userList, err
 
+}
+
+func AddUserImageToGroup(gStorage entities.AddFaceStorage) (string, error) {
+
+	params, err := json.Marshal(gStorage)
+	if err != nil {
+		beego.Warning("AddUserImageToGroup err", err, gStorage)
+		return "", err
+	}
+
+	re, err := HttpPost(UrlAddUserToGroup+AccessToken+resources.Token, string(params))
+	if err != nil {
+		beego.Warning("get userlist by group id  err :" + err.Error())
+		return "", err
+	}
+	addResp := entities.AddFaceResp{}
+	if err := json.Unmarshal(re, &addResp); err != nil {
+		beego.Warning("Unmarshal resp error ["+string(re), err)
+		return "", err
+	}
+	if addResp.ErrorCode != 0 {
+		beego.Warning("call error :", string(re))
+		return "", errors.New(addResp.ErrorMsg)
+	}
+
+	return addResp.Result.FaceToken, nil
 }
